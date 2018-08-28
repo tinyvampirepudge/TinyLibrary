@@ -1,0 +1,55 @@
+apply plugin: 'maven'
+
+def getRepositoryUsername() {
+    return hasProperty('NAME') ? NAME : ""
+}
+
+def getRepositoryPassword() {
+    return hasProperty('PASSWORD') ? PASSWORD : ""
+}
+
+afterEvaluate { project ->
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                pom.project {
+                    version VERSION
+                    artifactId POM_ARTIFACT_ID
+                    groupId GROUP
+                    packaging 'aar'
+                    description 'dependences lib'
+                }
+                repository(url: RELEASE_URL) {
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+                }
+
+                snapshotRepository(url: SNAPSHOT_URL) {
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+                }
+            }
+        }
+    }
+
+//    //生成文档相关
+//    task androidJavadocs(type: Javadoc) {
+//        source = android.sourceSets.main.java.srcDirs
+//        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//    }
+//
+//    //生成文档相关Jar
+//    task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+//        classifier = 'javadoc'
+//        from androidJavadocs.destinationDir
+//    }
+//
+//    //生成Sources相关
+//    task androidSourcesJar(type: Jar) {
+//        classifier = 'sources'
+//        from android.sourceSets.sourceFiles
+//    }
+
+//    artifacts {
+//        archives androidSourcesJar
+//        archives androidJavadocsJar
+//    }
+}
